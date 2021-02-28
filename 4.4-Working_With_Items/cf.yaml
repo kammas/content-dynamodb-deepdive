@@ -3,12 +3,9 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Migrate CSV to DynamoDB
 
 Parameters:
-  KeyPair:
-    Type: 'AWS::EC2::KeyPair::KeyName'
   LatestAmiId:
     Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
-
 Resources:
   DDBVPC:
     Type: AWS::EC2::VPC
@@ -62,8 +59,8 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref LatestAmiId
-      InstanceType: t3.medium
-      KeyName: !Ref KeyPair
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref 'DDBAdminProfile'
       UserData:
         Fn::Base64: |
             #!/bin/bash -xe
@@ -80,8 +77,7 @@ Resources:
           GroupSet:
             - !Ref 'WorkInstanceSG'
           SubnetId: !Ref 'PubSubnet'
-      IamInstanceProfile: !Ref 'DDBAdminProfile'
-
+       
   DDBAdminRole:
     Type: AWS::IAM::Role
     Properties:

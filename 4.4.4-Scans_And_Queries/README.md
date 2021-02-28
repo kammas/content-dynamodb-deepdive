@@ -7,10 +7,13 @@
 Sometimes you might need to write an expression containing an attribute name that conflicts with a DynamoDB reserved word. In this example, we replace `name` with an expression attribute name such as `#n`.
 
 ```sh
+REGION=us-east-1
+PROFILE=cloudguru
 aws dynamodb scan --table-name artist \
     --filter-expression "#n = :name" \
     --expression-attribute-values '{":name":{"S":"Dream Theater"}}' \
-    --expression-attribute-names '{"#n":"name"}'
+    --expression-attribute-names '{"#n":"name"}' \
+    --profile $PROFILE
 ```
 
 Result:
